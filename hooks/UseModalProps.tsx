@@ -22,6 +22,7 @@ export const useModal = (props: UseModalProps): UseModalReturn => {
     if (!visible) {
       setNewLink(initialLink);
     }
+    
   };
 
   return {

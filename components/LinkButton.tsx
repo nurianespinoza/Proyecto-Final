@@ -4,6 +4,7 @@ import { TouchableOpacity, Text } from 'react-native';
 interface LinkButtonProps {
   link: { url: string; text: string };
   onPress: () => void;
+  
 }
 
 const LinkButton: React.FC<LinkButtonProps> = ({ link, onPress }) => {

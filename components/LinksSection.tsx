@@ -5,6 +5,7 @@ import LinkButton from './LinkButton';
 interface LinksSectionProps {
   links: { url: string; text: string }[];
   onAddLinkPress: () => void;
+  
 }
 
 const LinksSection: React.FC<LinksSectionProps> = ({ links, onAddLinkPress }) => {

@@ -30,6 +30,7 @@ const UserProfile = ({
 
   const handleAddLinkPress = () => {
     setModalVisible(true);
+    
   };
 
   const handleSaveLinkPress = () => {
