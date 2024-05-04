@@ -1,4 +1,5 @@
 import express from "express";
+
 const app = express();
 
 app.use(express.json());
@@ -7,10 +8,9 @@ const data: Array<{}> = [
   {
     id: "1",
     profilePicture:
-      "https://social-links-profile-main-henna.vercel.app/_next/image?url=%2Fassets%2Fimages%2Favatar-jessica.jpeg&w=3840&q=75",
-    userName: "Jessica Randall ",
-    address: "London, United Kingdom",
-    description: "Front-enddeveloper and avid reader",
+      "https://scontent-mia3-1.xx.fbcdn.net/v/t39.30808-1/302899535_1243389203080396_8459184593115578454_n.jpg?stp=dst-jpg_s200x200&_nc_cat=101&ccb=1-7&_nc_sid=5f2048&_nc_ohc=Lv7BBW2HCeAAb7A_P0-&_nc_ht=scontent-mia3-1.xx&oh=00_AfC9qs4YAVWYMmAodmVRPMR6eBSsugeFMg64qtqeZIURDw&oe=661F9E99",
+    image: "computer.png",
+    profileName: "Eliseo",
   },
 ];
 
@@ -22,15 +22,17 @@ app.get("/", async (req, res) => {
 });
 
 app.post("/posts", (req, res) => {
-  const { profilePicture = "", profileName = "" } = req.body;
-
-  console.log("saving new data: ", { profilePicture, profileName });
+  const { profilePicture = "", Name = "" } = req.body;
 
   data.push({
     id: data.length.toString(),
     profilePicture,
-    profileName,
+    Name,
   });
+
+  console.log("new post received:");
+  console.log("profile picture:", profilePicture);
+  console.log("account name:", Name);
 
   res.json(data);
 });
