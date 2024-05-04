@@ -1,21 +1,16 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import UserProfile from './components/UserProfile';
+import ProfileData from './components/ProfileData';
 
 const App: React.FC = () => {
   return (
     <View style={styles.container}>
-      <UserProfile 
+      <ProfileData
         name="Jessica Randall"
         location="London, United Kingdom"
         description='"Front-end developer and avid reader".'
-        imageUrl="https://automationhero.ai/wp-content/uploads/2020/01/Jessica-Randall.png"
-        links={[
-          { url: 'https://github.com/nurianespinoza', text: 'GitHub' },
-          { url: 'https://www.frontendmentor.io/', text: 'Frontend Mentor' },
-          { url: 'https://www.linkedin.com/feed/', text: 'LinkedIn' },
-          { url: 'https://twitter.com/?lang=es', text: 'Twitter' }
-        ]}
+        imageUrl="https://social-links-profile-main-henna.vercel.app/_next/image?url=%2Fassets%2Fimages%2Favatar-jessica.jpeg&w=3840&q=75"
+        links={[  ]}
       />
     </View>
   );
@@ -31,3 +26,4 @@ const styles = StyleSheet.create({
 });
 
 export default App;
+
