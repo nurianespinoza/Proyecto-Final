@@ -8,10 +8,10 @@ import {
   Modal,
   TextInput,
   Linking,
-  ScrollView,
+  ScrollView, Alert
 } from "react-native";
 
-const ProfileData = ({
+const UserProfile = ({
   name,
   location,
   description,
@@ -22,26 +22,51 @@ const ProfileData = ({
   location: string;
   description: string;
   imageUrl: string;
-  links?: { url: string; text: string }[];
+  links: { url: string; text: string }[];
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [newLink, setNewLink] = useState({ url: "", text: "" });
+  const [newLink, setNewLink] = useState({ url: "", text: "", profilePicture: "", profileName: "" });
 
   const handleAddLinkPress = () => {
     setModalVisible(true);
   };
 
-  const handleSaveLinkPress = () => {
-    if (newLink.url && newLink.text) {
-      links?.push({ url: newLink.url, text: newLink.text });
-      setModalVisible(false);
-      setNewLink({ url: "", text: "" });
-    }
-  };
-
   const handleCancelLinkPress = () => {
     setModalVisible(false);
-    setNewLink({ url: "", text: "" });
+    setNewLink({ url: "", text: "", profilePicture: "", profileName:"" });
+  };
+
+  const handleSaveLinkPress = async () => {
+    if (newLink.url && newLink.text && newLink.profilePicture && newLink.profileName) {
+      try {
+       
+        links.push({ url: newLink.url, text: newLink.text });
+  
+        const response = await fetch('http://192.168.1.11:3001/posts', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newLink),
+        });
+  
+        if (response.ok) {
+          console.log('New link added:');
+          console.log('URL:', newLink.url);
+          console.log('Text:', newLink.text);
+          setModalVisible(false);
+          setNewLink({ url: '', profilePicture: '', text: '', profileName: ""});
+        } else {
+          console.error('error sending data');
+          Alert.alert('an error occurred while sending the data.');
+        }
+      } catch (error) {
+        console.error('request error:', error);
+        Alert.alert( 'an error occured in the request.');
+      }
+    } else {
+      Alert.alert('please fill aut all fields.');
+    }
   };
 
   return (
@@ -56,8 +81,9 @@ const ProfileData = ({
             <Text style={styles.locationText}>{location}</Text>
             <Text style={styles.descriptionText}>{description}</Text>
           </View>
-          <ScrollView style={styles.linksContainer}>
-            {links?.map((link, index) => (
+         <ScrollView style={styles.linksContainer}>
+         <View >
+            {links.map((link, index) => (
               <TouchableOpacity
                 key={index}
                 style={styles.linkButton}
@@ -66,10 +92,13 @@ const ProfileData = ({
                 <Text style={styles.linkText}>{link.text}</Text>
               </TouchableOpacity>
             ))}
-          </ScrollView>
-          <TouchableOpacity style={styles.addLinkButton} onPress={handleAddLinkPress}>
-            <Text style={styles.addLinkText}>+ New Link</Text>
-          </TouchableOpacity>
+            
+          </View>   
+         </ScrollView>
+         <TouchableOpacity style={styles.addLinkButton} onPress={handleAddLinkPress}>
+              <Text style={styles.addLinkText}>+ New Link</Text>
+            </TouchableOpacity>
+          
         </View>
       </View>
       <Modal
@@ -82,18 +111,18 @@ const ProfileData = ({
       >
         <View style={styles.ContainerNewLink}>
           <View style={styles.ContentNewLink}>
-            <Text style={styles.modalTitle}>Add A New Link</Text>
+            <Text style={styles.modalTitle}>Add a new link</Text>
             <TextInput
               style={styles.input}
               placeholder="URL"
               value={newLink.url}
-              onChangeText={(text) => setNewLink({ ...newLink, url: text })}
+              onChangeText={(text) => setNewLink({ ...newLink, url: text, profilePicture: text })}
             />
             <TextInput
               style={styles.input}
               placeholder="Text"
               value={newLink.text}
-              onChangeText={(text) => setNewLink({ ...newLink, text: text })}
+              onChangeText={(text) => setNewLink({ ...newLink, text: text, profileName: text })}
             />
             <View style={styles.buttonContainer}>
               <TouchableOpacity style={styles.cancelButton} onPress={handleCancelLinkPress}>
@@ -184,7 +213,7 @@ const styles = StyleSheet.create({
   },
   linksContainer: {
     marginTop: -20,
-    maxHeight: 300, // Ajusta según tus necesidades
+    maxHeight: 300, 
   },
   linkButton: {
     backgroundColor: "#333333",
@@ -212,80 +241,78 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  addLinkText: {
-    fontSize: 25,
-    color: "#fff",
-  },
-  ContainerNewLink: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    
-  },
 
-  ContentNewLink: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 5,
-    width: "100%",
-    maxWidth: 300,
-    shadowColor: "red",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 30, // intencidad  de la sombra
-    borderWidth: 1, // Ancho del borde
-    borderColor: "red", // Color del borde
-  },
+addLinkText: {
+  fontSize: 25,
+  color: "#fff",
+},
+ContainerNewLink: {
+  flex: 1,
+  justifyContent: "center",
+  alignItems: "center",
+  backgroundColor: "rgba(0, 0, 0, 0.5)",
   
+},
 
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 20,
+ContentNewLink: {
+  backgroundColor: "#fff",
+  padding: 20,
+  borderRadius: 5,
+  width: "100%",
+  maxWidth: 300,
+  shadowColor: "red",
+  shadowOffset: {
+    width: 0,
+    height: 2,
+  
   },
-  input: {
-    height: 35,
-    borderColor: "#000",
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 15,
-    width: "100%",
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10,
-  },
-  cancelButton: {
-    backgroundColor: "#FF0000",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 5,
-  },
-  cancelText: {
-    fontSize: 16,
-    color: "#fff",
-  },
-  saveButton: {
-    backgroundColor: "#A367FA",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 5,
-  },
-  saveText: {
-    fontSize: 16,
-    color: "#fff",
-  },
+  shadowOpacity: 0.25,
+  shadowRadius: 3.84,
+  elevation: 30, // intencidad  de la sombra
+  borderWidth: 1, // Ancho del borde
+  borderColor: "red", // Color del borde
+},
+
+
+modalTitle: {
+  fontSize: 20,
+  fontWeight: "bold",
+  marginBottom: 20,
+},
+input: {
+  height: 35,
+  borderColor: "#000",
+  borderWidth: 1,
+  borderRadius: 5,
+  paddingHorizontal: 10,
+  marginBottom: 15,
+  width: "100%",
+},
+buttonContainer: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  marginTop: 10,
+},
+cancelButton: {
+  backgroundColor: "#FF0000",
+  paddingVertical: 8,
+  paddingHorizontal: 16,
+  borderRadius: 5,
+},
+cancelText: {
+  fontSize: 16,
+  color: "#fff",
+},
+saveButton: {
+  backgroundColor: "#A367FA",
+  paddingVertical: 8,
+  paddingHorizontal: 16,
+  borderRadius: 5,
+},
+saveText: {
+  fontSize: 16,
+  color: "#fff",
+},
 });
 
-export default ProfileData;
-
-
-
+export default UserProfile;
